@@ -56,6 +56,10 @@ const FeaturedRow = ({ id, title, desc }) => {
             rating={res.rating}
             type={res.type.name}
             location={res.address}
+            lat={res.lat}
+            long={res.long}
+            dishes={res.dishes}
+            desc={res.short_description}
           />
         ))}
       </ScrollView>
