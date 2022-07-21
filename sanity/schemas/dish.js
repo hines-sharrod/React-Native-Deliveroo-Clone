@@ -6,7 +6,7 @@ export default {
     {
       name: "name",
       type: "string",
-      title: "Restaurant name",
+      title: "Dish name",
       validation: (Rule) => Rule.required()
     },
     {

@@ -1,7 +1,8 @@
 import { View, Text, ScrollView, Image, TouchableOpacity } from "react-native";
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useEffect } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { urlFor } from "../sanity";
+import sanityClient, { urlFor } from "../sanity";
+
 import {
   ArrowLeftIcon,
   StarIcon,
@@ -9,6 +10,7 @@ import {
   ChevronRightIcon
 } from "react-native-heroicons/solid";
 import { QuestionMarkCircleIcon } from "react-native-heroicons/outline";
+import Dish from "../components/Dish";
 
 const RestaurantScreen = () => {
   const navigation = useNavigation();
@@ -34,9 +36,28 @@ const RestaurantScreen = () => {
     });
   }, []);
 
+  useEffect(() => {
+    sanityClient
+      .fetch(
+        `
+        *[_type == "featured" && _id == $id] {
+          ...,
+          restaurants[]->{
+            ...,
+            dishes[]->
+          }
+        }[0]
+      `,
+        { id }
+      )
+      .then((data) => setFeaturedCategories(data.restaurants.dishes));
+  }, []);
+
+  console.log(dishes);
+
   return (
-    <ScrollView>
-      <View className="relative ">
+    <ScrollView className="relative">
+      <View className="relative">
         <Image
           source={{
             uri: urlFor(imgUrl).url()
@@ -72,6 +93,31 @@ const RestaurantScreen = () => {
           <Text className="font-semibold flex-1">Have a food allergy?</Text>
           <ChevronRightIcon size={20} color="#00CCBB" />
         </View>
+      </View>
+
+      <Text className="font-bold text-lg px-4 pt-3 pb-2">Menu</Text>
+
+      <View className="bg-white">
+        {dishes?.map((dish) => (
+          <Dish
+            key={dish._id}
+            id={dish._id}
+            title={dish.name}
+            description={dish.short_description}
+            price={dish.price}
+            imgUrl={urlFor(imgUrl).url()}
+          />
+        ))}
+      </View>
+
+      <View className="bg-gray-300 fixed bottom-32 rounded-md flex-row justify-between items-center w-100 p-4 mx-4">
+        <Text className="bg-gray-400 py-1 px-2 text-base text-white font-bold">
+          3
+        </Text>
+        <Text className="text-white font-bold text-base shadow-lg">
+          View Basket
+        </Text>
+        <Text className="text-white font-bold text-base shadow-lg">$12</Text>
       </View>
     </ScrollView>
   );
