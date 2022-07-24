@@ -21,7 +21,6 @@ const CartScreen = () => {
   const items = useSelector(selectCartItems);
   const totalCost = useSelector(getTotalCost);
   const [groupedCartItems, setGroupedCartItems] = useState([]);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const groupedItems = items.reduce((group, item) => {
@@ -102,7 +101,10 @@ const CartScreen = () => {
             <Text className="font-extrabold">{totalCost}</Text>
           </View>
 
-          <TouchableOpacity className="bg-gray-400 rounded-lg p-5">
+          <TouchableOpacity
+            onPress={() => navigation.navigate("PreparingOrder")}
+            className="bg-gray-400 rounded-lg p-5"
+          >
             <Text className="font-bold text-center text-white">
               Place Order
             </Text>
